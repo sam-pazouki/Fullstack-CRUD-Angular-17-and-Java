@@ -1,0 +1,63 @@
+<!-- Main section for the product page, listens for scroll events to load more products when scrolling -->
+<section class="product--page" (scroll)="onScroll($event)">
+    
+    <!-- Container for the product page content -->
+    <div class="container">
+        
+        <!-- Subtitle and action buttons row -->
+        <div class="subtitle flex-row flex-content-between">
+            <!-- Display the total number of products -->
+            <div class="flex-row">Full Stack Java e Angular <small class="var--grey">({{ totalProduct }})</small></div>
+            
+            <!-- Action buttons for exporting products and adding a new product -->
+            <div class="text-standard flex-row">
+                
+                <!-- Export button, shows loading state when exporting -->
+                <button mat-raised-button color="accent" class="" (click)="exportProduct()" [disabled]="loadingExport">
+                    <div class="flex-row">
+                        <i class="material-icons" *ngIf="!loadingExport">description</i> 
+                        <span class="hidemobile-icon" *ngIf="!loadingExport">Export Excel</span>
+                        <div class="flex-row flex-content-center" *ngIf="loadingExport">
+                            <app-loader></app-loader> 
+                            <span [style.margin-left]="'10px'">Carregando...</span> 
+                        </div>
+                    </div>
+                </button> 
+                
+                <!-- Add Product button -->
+                <button mat-raised-button color="primary" class="" (click)="addProduct()">
+                    <div class="flex-row">
+                        <i class="material-icons">add</i> 
+                        <span class="hidemobile-icon">Adicionar</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Search and product list -->
+        <div>
+            <div class="space"></div>
+            
+            <!-- Search bar for filtering products -->
+            <div class="search">
+                <mat-form-field appearance="outline">
+                    <mat-label>Procurar</mat-label>
+                    <input [(ngModel)]="searchProduct" (ngModelChange)="onSearchProduct()" matInput placeholder="Pesquise por ID, nome, CPF">
+                </mat-form-field>
+            </div>
+            
+            <div class="space"></div>
+            
+            <!-- Product list component, displays products based on the search and sorting criteria -->
+            <app-products 
+                [products]="filteredProducts | slice: 0 : limitProduct" 
+                [loadingProduct]="loadingProduct" 
+                [loadingScrollProduct]="loadingScrollProduct" 
+                [selectedSort]="selectedSort" 
+                [selectedOrderBy]="selectedOrderBy" 
+                (changesSort)="changesSort($event)" 
+                (updateData)="loadProducts()">
+            </app-products>
+        </div>
+    </div>
+</section>

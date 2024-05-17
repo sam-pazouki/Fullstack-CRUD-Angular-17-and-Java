@@ -1,0 +1,126 @@
+<!-- Form for adding or editing a product -->
+<form [formGroup]="productForm" #form="ngForm">
+  
+  <!-- Modal title indicating whether the form is for adding or editing a product -->
+  <div class="modal-title" mat-dialog-title>
+    <ng-container *ngIf="!data?.detail">
+      Adicionar
+    </ng-container>
+    <ng-container *ngIf="data?.detail">
+      Editar
+    </ng-container>
+    Product
+  </div>
+
+  <mat-dialog-content>
+    <div class="space"></div>
+
+    <!-- Form field for product name -->
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>Nome</mat-label>
+        <input formControlName="name" matInput placeholder="Nome">
+      </mat-form-field>
+    </div>
+
+    <div class="space"></div>
+
+    <!-- Form field for product description -->
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>CPF</mat-label>
+        <input formControlName="description" matInput placeholder="Description">
+      </mat-form-field>
+    </div>
+
+    <div class="space"></div>
+
+    <!-- Section for uploading and cropping product photo -->
+    <div>
+      <div>
+        <mat-label>Foto</mat-label>
+      </div>
+
+      <!-- Display the cropped image if available -->
+      <div *ngIf="croppedImage">
+        <img [src]="croppedImage" height="200" [style.border-radius]="'8px'" [style.margin]="'auto'" width="auto" class="imagemobile" />
+      </div>
+      <div class="space-half"></div>
+
+      <!-- Upload button to trigger file input -->
+      <div>
+        <button type="submit" mat-raised-button color="primary" class="flex-row" (click)="file.click()" [disabled]="submitting">
+          {{ croppedImage ? 'Mudar' : 'Carregar' }}
+        </button>
+      </div>
+
+      <!-- Hidden file input for uploading image -->
+      <input type="file" (change)="fileChangeEvent($event)" style="display:none" #file />
+      <div class="space-half"></div>
+
+      <!-- Image cropper component displayed if an image is ready for cropping -->
+      <ng-container *ngIf="isImageReady">
+        <div>
+          <mat-label>Crop</mat-label>
+        </div>
+      </ng-container>
+      <div class="space-half"></div>
+
+      <!-- Image cropper component settings and event bindings -->
+      <image-cropper 
+        [imageChangedEvent]="imageChangedEvent" 
+        [maintainAspectRatio]="true" 
+        [aspectRatio]="4 / 3" 
+        [output]="'base64'"
+        format="png" 
+        (imageCropped)="imageCropped($event)" 
+        (imageLoaded)="imageLoaded($event)"
+        (cropperReady)="cropperReady()" 
+        (loadImageFailed)="loadImageFailed()">
+      </image-cropper>
+    </div>
+
+  </mat-dialog-content>
+
+  <!-- Modal actions -->
+  <mat-dialog-actions>
+    <div class="flex-row flex-content-end w-full modal-action">
+
+      <!-- Empty div for spacing or future actions -->
+      <div></div>
+
+      <!-- Container for action buttons -->
+      <div class="flex-row flex-content-end w-full">
+
+        <!-- Close button -->
+        <button type="button" mat-raised-button color="default" class="flex-row" (click)="closeModal()">
+          <ng-container *ngIf="true">
+            <i class="material-icons">close</i>
+            Fechar
+          </ng-container>
+        </button>
+
+        <!-- Submit button -->
+        <button type="submit" mat-raised-button color="primary" class="flex-row" (click)="scoring()" [disabled]="submitting">
+          <ng-container *ngIf="submitting">
+            <div class="flex-row flex-content-center">
+              <app-loader></app-loader>
+              <span [style.margin-left]="'10px'">Carregando...</span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!submitting">
+            <ng-container *ngIf="!data?.detail">
+              <i class="material-icons">add</i>
+              Enviar
+            </ng-container>
+            <ng-container *ngIf="data?.detail">
+              <i class="material-icons">edit</i>
+              Editar
+            </ng-container>
+          </ng-container>
+        </button>
+
+      </div>
+    </div>
+  </mat-dialog-actions>
+</form>
